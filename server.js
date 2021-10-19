@@ -51,9 +51,10 @@ app.get(
   "/auth/google/callback",
   passport.authenticate("google", {
     failureRedirect: "/failed",
+    successRedirect: `${process.env.LOCAL_HOST}/dashboard`,
   }),
   (req, res) => {
-    res.redirect("/profile");
+    console.log("server: login success");
   }
 );
 
