@@ -2,8 +2,10 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 const cookieSession = require("cookie-session");
-require("./src/passport/passport");
 const passport = require("passport");
+const cors = require("cors");
+
+require("./auth/passport");
 
 const PORT = process.env.PORT || 8080;
 
@@ -12,6 +14,7 @@ const app = express();
 app.enable("trust proxy");
 app.use(cookieParser());
 dotenv.config();
+app.use(cors());
 
 app.use(
   cookieSession({
@@ -23,12 +26,11 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get("/", (req, res) => {
-  res.send("<h1>HOME</h1>");
-});
+const authRouter = require("./api/auth");
+app.use("/auth/google", authRouter);
 
-app.get("/failed", (req, res) => {
-  res.send("<h1>Log in Failed.</h1>");
+app.get("/", (req, res) => {
+  res.send("<h1>User Backend Home</h1>");
 });
 
 const checkUserLoggedIn = (req, res, next) => {
@@ -40,28 +42,10 @@ app.get("/profile", checkUserLoggedIn, (req, res) => {
   res.send(`<h1>${req.user.displayName}'s Profile Page</h1>`);
 });
 
-app.get(
-  "/auth/google",
-  passport.authenticate("google", {
-    scope: ["profile", "email"],
-  })
-);
-
-app.get(
-  "/auth/google/callback",
-  passport.authenticate("google", {
-    failureRedirect: "/failed",
-    successRedirect: `${process.env.LOCAL_HOST}/dashboard`,
-  }),
-  (req, res) => {
-    console.log("server: login success");
-  }
-);
-
 app.get("/logout", (req, res) => {
   req.session = null;
   req.logout();
-  res.redirect("/");
+  res.redirect(`${process.env.CLIENT_LOCAL_HOST}`);
 });
 
 app.use((err, req, res, next) => {
