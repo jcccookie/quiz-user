@@ -29,23 +29,37 @@ app.use(passport.session());
 const authRouter = require("./api/auth");
 app.use("/auth/google", authRouter);
 
-app.get("/", (req, res) => {
-  res.send("<h1>User Backend Home</h1>");
+app.get("/", (req, res, next) => {
+  try {
+    res.send("<h1>User Backend Home</h1>");
+  } catch (err) {
+    next(err);
+  }
 });
 
 const checkUserLoggedIn = (req, res, next) => {
   req.user ? next() : res.status(401).send({ Error: "User is invalid" });
 };
 
-app.get("/profile", checkUserLoggedIn, (req, res) => {
-  console.log(req.user);
-  res.send(`<h1>${req.user.displayName}'s Profile Page</h1>`);
+app.get("/profile", checkUserLoggedIn, (req, res, next) => {
+  try {
+    console.log(req.user);
+    res.send(`<h1>${req.user.displayName}'s Profile Page</h1>`);
+  } catch (err) {
+    next(err);
+  }
 });
 
-app.get("/logout", (req, res) => {
-  req.session = null;
-  req.logout();
-  res.redirect(`${process.env.CLIENT_LOCAL_HOST}`);
+app.get("/logout", (req, res, next) => {
+  try {
+    req.session = null;
+    req.logout();
+    res.status(200).send({
+      message: "logout success",
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 app.use((err, req, res, next) => {
