@@ -14,7 +14,20 @@ const app = express();
 app.enable("trust proxy");
 app.use(cookieParser());
 dotenv.config();
-app.use(cors());
+
+const whitelist = ["http://localhost:3000"];
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 app.use(
   cookieSession({
@@ -53,9 +66,7 @@ app.get("/logout", (req, res, next) => {
   try {
     req.session = null;
     req.logout();
-    res.status(200).send({
-      message: "logout success",
-    });
+    res.status(200).redirect(process.env.CLIENT_LOCAL_HOST);
   } catch (err) {
     next(err);
   }
