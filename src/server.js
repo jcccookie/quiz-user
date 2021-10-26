@@ -18,7 +18,7 @@ app.use(cors());
 
 app.use(
   cookieSession({
-    name: "session-name",
+    name: "quiz-session",
     keys: ["key1", "key2"],
   })
 );
@@ -43,8 +43,7 @@ const checkUserLoggedIn = (req, res, next) => {
 
 app.get("/profile", checkUserLoggedIn, (req, res, next) => {
   try {
-    console.log(req.user);
-    res.send(`<h1>${req.user.displayName}'s Profile Page</h1>`);
+    res.status(200).send(req.user);
   } catch (err) {
     next(err);
   }
