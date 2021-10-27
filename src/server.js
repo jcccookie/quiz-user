@@ -15,15 +15,9 @@ app.enable("trust proxy");
 app.use(cookieParser());
 dotenv.config();
 
-const whitelist = ["http://localhost:3000"];
+const whitelist = [process.env.CLIENT_LOCAL_HOST];
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1 || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  origin: whitelist,
   credentials: true,
 };
 
@@ -31,8 +25,11 @@ app.use(cors(corsOptions));
 
 app.use(
   cookieSession({
-    name: "quiz-session",
+    key: "quiz-session",
     keys: ["key1", "key2"],
+    // cookie: {
+    //   domain: process.env.CLIENT_LOCAL_HOST,
+    // },
   })
 );
 
@@ -66,7 +63,10 @@ app.get("/logout", (req, res, next) => {
   try {
     req.session = null;
     req.logout();
-    res.status(200).redirect(process.env.CLIENT_LOCAL_HOST);
+    res
+      .status(200)
+      .clearCookie("userId")
+      .redirect(process.env.CLIENT_LOCAL_HOST);
   } catch (err) {
     next(err);
   }
