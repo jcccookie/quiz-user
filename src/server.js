@@ -27,9 +27,9 @@ app.use(
   cookieSession({
     key: "quiz-session",
     keys: ["key1", "key2"],
-    // cookie: {
-    //   domain: process.env.CLIENT_LOCAL_HOST,
-    // },
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours,
+    httpOnly: false,
+    // domain: process.env.CLIENT_LOCAL_HOST,
   })
 );
 
@@ -65,7 +65,10 @@ app.get("/logout", (req, res, next) => {
     req.logout();
     res
       .status(200)
-      .clearCookie("userId")
+      .cookie("userId", "", { expires: new Date() })
+      .cookie("name", "", { expires: new Date() })
+      .cookie("email", "", { expires: new Date() })
+      .cookie("auth", false, { expires: new Date() })
       .redirect(process.env.CLIENT_LOCAL_HOST);
   } catch (err) {
     next(err);
