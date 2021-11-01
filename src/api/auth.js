@@ -42,6 +42,7 @@ router.get(
   "/",
   passport.authenticate("google", {
     scope: ["profile", "email"],
+    prompt: "consent",
   })
 );
 
