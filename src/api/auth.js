@@ -13,7 +13,7 @@ const setUserIDResponseCookie = (req, res, next) => {
       res
         .cookie("userId", req.user.id, {
           expires: new Date(Date.now() + 1 * 3600000), // 1 hours
-          // domain: ".localhost:3000",
+          // domain: "http://localhost:3000",
           httpOnly: false,
         })
         .cookie("name", req.user.displayName, {
