@@ -11,26 +11,20 @@ const setUserIDResponseCookie = (req, res, next) => {
     // if user successfully signed in, store user-id in cookie
     if (req.user) {
       res
-        .cookie("userId", req.user.id, {
+        .cookie("userId", req.user._json.sub, {
           expires: new Date(Date.now() + 1 * 3600000), // 1 hours
           // domain: "http://localhost:3000",
-          httpOnly: false,
-          // sameSite: "none",
+          // httpOnly: false,
         })
         .cookie("name", req.user.displayName, {
           expires: new Date(Date.now() + 1 * 3600000), // 1 hours
           // domain: ".localhost:3000",
-          httpOnly: false,
+          // httpOnly: false,
         })
         .cookie("email", req.user._json.email, {
           expires: new Date(Date.now() + 1 * 3600000), // 1 hours
           // domain: ".localhost:3000",
-          httpOnly: false,
-        })
-        .cookie("auth", true, {
-          expires: new Date(Date.now() + 1 * 3600000), // 1 hours
-          // domain: ".localhost:3000",
-          httpOnly: false,
+          // httpOnly: false,
         });
     } else {
       res.clearCookie("userId");
