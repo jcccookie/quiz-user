@@ -13,18 +13,12 @@ const setUserIDResponseCookie = (req, res, next) => {
       res
         .cookie("userId", req.user._json.sub, {
           expires: new Date(Date.now() + 1 * 3600000), // 1 hours
-          // domain: "http://localhost:3000",
-          // httpOnly: false,
         })
         .cookie("name", req.user.displayName, {
           expires: new Date(Date.now() + 1 * 3600000), // 1 hours
-          // domain: ".localhost:3000",
-          // httpOnly: false,
         })
         .cookie("email", req.user._json.email, {
           expires: new Date(Date.now() + 1 * 3600000), // 1 hours
-          // domain: ".localhost:3000",
-          // httpOnly: false,
         });
     } else {
       res.clearCookie("userId");
@@ -50,9 +44,9 @@ router.get(
   setUserIDResponseCookie,
   (req, res, next) => {
     if (req.user) {
-      res.redirect(`${process.env.CLIENT_LOCAL_HOST}/dashboard`);
+      res.redirect(`${process.env.CLIENT_HOST}/dashboard`);
     } else {
-      res.redirect(`${process.env.CLIENT_LOCAL_HOST}/login/error}`);
+      res.redirect(`${process.env.CLIENT_HOST}/login/error}`);
     }
     next();
   }

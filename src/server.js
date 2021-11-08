@@ -15,7 +15,10 @@ app.enable("trust proxy");
 app.use(cookieParser());
 dotenv.config();
 
-const whitelist = [process.env.CLIENT_LOCAL_HOST];
+const whitelist = [
+  "http://localhost:3000",
+  "https://quiz-app-467.herokuapp.com/",
+];
 const corsOptions = {
   origin: whitelist,
   credentials: true,
@@ -70,7 +73,7 @@ app.get("/logout", (req, res, next) => {
       .cookie("name", "", { expires: new Date() })
       .cookie("email", "", { expires: new Date() })
       .cookie("auth", false, { expires: new Date() })
-      .redirect(process.env.CLIENT_LOCAL_HOST);
+      .redirect(process.env.CLIENT_HOST);
   } catch (err) {
     next(err);
   }
