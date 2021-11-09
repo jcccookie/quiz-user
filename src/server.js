@@ -17,7 +17,7 @@ dotenv.config();
 
 const whitelist = [
   "http://localhost:3000",
-  "https://quiz-app-467.herokuapp.com/",
+  "https://quiz-app-467.herokuapp.com",
 ];
 const corsOptions = {
   origin: whitelist,

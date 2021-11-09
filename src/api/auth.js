@@ -44,7 +44,9 @@ router.get(
   setUserIDResponseCookie,
   (req, res, next) => {
     if (req.user) {
-      res.redirect(`${process.env.CLIENT_HOST}/dashboard`);
+      res.redirect(
+        `${process.env.CLIENT_HOST}/dashboard/${req.user._json.email}/${req.user.displayName}`
+      );
     } else {
       res.redirect(`${process.env.CLIENT_HOST}/login/error}`);
     }
