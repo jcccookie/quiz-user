@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const cookieSession = require("cookie-session");
 const passport = require("passport");
 const cors = require("cors");
+const jwt = require("jsonwebtoken");
 
 require("./auth/passport");
 
@@ -13,6 +14,8 @@ const app = express();
 
 app.enable("trust proxy");
 app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 dotenv.config();
 
 const whitelist = [
@@ -78,6 +81,20 @@ app.get("/logout", (req, res, next) => {
     next(err);
   }
 });
+
+// app.post("/login", (req, res) => {
+//   const { email, password, name } = req.body;
+//   const user = { email, password, name };
+
+//   // Find user in datastore
+//   // /// ////
+
+//   const accessToken = jwt.sign(user, process.env.TOKEN_SECRET, {
+//     expiresIn: 3600000,
+//   });
+
+//   res.json({ accessToken });
+// });
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;

@@ -45,7 +45,7 @@ router.get(
   (req, res, next) => {
     if (req.user) {
       res.redirect(
-        `${process.env.CLIENT_HOST}/dashboard/${req.user._json.email}/${req.user.displayName}`
+        `${process.env.CLIENT_HOST}/dashboard/${req.user.profile._json.email}/${req.user.profile.displayName}/${req.user.accessToken}`
       );
     } else {
       res.redirect(`${process.env.CLIENT_HOST}/login/error}`);
