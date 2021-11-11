@@ -4,7 +4,9 @@ const cookieParser = require("cookie-parser");
 const cookieSession = require("cookie-session");
 const passport = require("passport");
 const cors = require("cors");
-const jwt = require("jsonwebtoken");
+
+const { ds, getEntityId, getEntityKind } = require("../datastore");
+const datastore = ds();
 
 require("./auth/passport");
 
@@ -35,8 +37,6 @@ app.use(
     keys: ["key1", "key2"],
     maxAge: 3600000,
     httpOnly: false,
-    // sameSite: "none",
-    // domain: process.env.CLIENT_LOCAL_HOST,
   })
 );
 
@@ -82,19 +82,43 @@ app.get("/logout", (req, res, next) => {
   }
 });
 
-// app.post("/login", (req, res) => {
-//   const { email, password, name } = req.body;
-//   const user = { email, password, name };
+const throwError = ({ code, message }) => {
+  const error = new Error(message);
+  error.statusCode = code;
+  throw error;
+};
 
-//   // Find user in datastore
-//   // /// ////
+// check if the session from client is matched with the session in the datastore
+app.get("/session", async (req, res, next) => {
+  try {
+    const { sessionId, email } = req.query;
 
-//   const accessToken = jwt.sign(user, process.env.TOKEN_SECRET, {
-//     expiresIn: 3600000,
-//   });
+    if (!sessionId) {
+      throwError({ code: 401, message: "session doesn't exist" });
+    }
 
-//   res.json({ accessToken });
-// });
+    if (!email) {
+      throwError({ code: 401, message: "email doesn't exist" });
+    }
+
+    const query = datastore.createQuery("User");
+    const userEntities = await datastore.runQuery(query);
+
+    let isUserAuthenticated = false;
+    userEntities[0].forEach((user) => {
+      if (user["email"] === email && user["session"] === sessionId) {
+        isUserAuthenticated = true;
+        res.status(200).send("session is valid");
+      }
+    });
+
+    if (!isUserAuthenticated) {
+      throwError({ code: 401, message: "session is not valid" });
+    }
+  } catch (err) {
+    next(err);
+  }
+});
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;

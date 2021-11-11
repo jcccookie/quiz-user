@@ -41,7 +41,6 @@ router.get(
     // failureRedirect: `${process.env.CLIENT_LOCAL_HOST}/login/error}`,
     // successRedirect: `${process.env.CLIENT_LOCAL_HOST}/dashboard`,
   }),
-  setUserIDResponseCookie,
   (req, res, next) => {
     if (req.user) {
       res.redirect(
